@@ -60,15 +60,15 @@ sudo ncu -k naive_sgemm -s 63 -c 1 ./bench   # skip to the N=4096 launch
 
 Profile at N=512 (one launch of each kernel):
 
-| Metric | Naive | Tiled | Reading |
+| Metric | Naive | Tiled |
 |---|---:|---:|---|
-| Duration | 265.95 µs | 213.92 µs | tiled is ~20% faster |
-| Compute (SM) throughput | 84.76% | 72.33% | — |
-| L1/TEX cache throughput | 96.49% | 82.39% | naive saturates the load pipe |
-| L2 cache throughput | 8.68% | 8.53% | — |
-| DRAM throughput | 4.14% | 3.41% | both low: 512² fits in cache |
-| Achieved occupancy | 65.91% | 66.49% | capped by 1024-thread blocks |
-| Static shared mem / block | 0 B | 8.19 KB | tiling's two 32×32 tiles |
+| Duration | 265.95 µs | 213.92 µs |
+| Compute (SM) throughput | 84.76% | 72.33% |
+| L1/TEX cache throughput | 96.49% | 82.39% |
+| L2 cache throughput | 8.68% | 8.53% |
+| DRAM throughput | 4.14% | 3.41% |
+| Achieved occupancy | 65.91% | 66.49% |
+| Static shared mem / block | 0 B | 8.19 KB |
 
 At 512 both kernels are cache-resident, so the difference is the L1/TEX load pipe:
 naive pins it at 96.5% (two global loads per multiply-add), while tiling serves most
