@@ -61,7 +61,7 @@ sudo ncu -k naive_sgemm -s 63 -c 1 ./bench   # skip to the N=4096 launch
 Profile at N=512 (one launch of each kernel):
 
 | Metric | Naive | Tiled |
-|---|---:|---:|---|
+|---|---:|---:|
 | Duration | 265.95 µs | 213.92 µs |
 | Compute (SM) throughput | 84.76% | 72.33% |
 | L1/TEX cache throughput | 96.49% | 82.39% |
