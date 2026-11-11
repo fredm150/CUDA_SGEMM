@@ -7,7 +7,7 @@ matrix multiply (`C = alpha*A*B + beta*C`) in CUDA, benchmarked against cuBLAS.
 
 The kernels were run on an NVIDIA RTX 4090 (Ada, CC 8.9):
 
-![Performance of the kernels](benchmark.png)
+![Performance of the kernels](docs/benchmark.png)
 
 GFLOPs at matrix size 4096×4096:
 
