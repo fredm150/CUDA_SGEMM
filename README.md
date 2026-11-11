@@ -1,7 +1,7 @@
 # CUDA SGEMM
 
 Step-by-step comparison of a naive and a shared-memory tiled single-precision
-matrix multiply (`C = alpha*A*B + beta*C`) in CUDA, benchmarked against cuBLAS.
+matrix multiply in CUDA, benchmarked against cuBLAS.
 
 ## Overview
 
@@ -30,9 +30,8 @@ The tiled kernel is roughly ~1.3–1.6× faster than the naive kernel.
 
 ## Setup
 
-Requires the CUDA toolkit (for `nvcc` and cuBLAS) and an NVIDIA GPU. Find your GPU's
-compute capability with `nvidia-smi --query-gpu=compute_cap --format=csv`
-(RTX 4090 → 8.9 → `sm_89`).
+Requires the CUDA toolkit (for `nvcc` and cuBLAS) and an NVIDIA GPU. To find your GPU's
+compute capability, run the command `nvidia-smi --query-gpu=compute_cap --format=csv`
 
 Files:
 - `naive.cu` — naive kernel (one thread per output element)
@@ -54,9 +53,11 @@ python3 plot_results.py    #
 nvcc -O3 -arch=sm_89 -lineinfo bench.cu naive.cu tiled.cu -o bench -lcublas
 sudo ncu -k sgemm_tiled -c 1 ./bench         # one tiled launch (N=512)
 sudo ncu -k naive_sgemm -c 1 ./bench         # one naive launch (N=512)
-sudo ncu -k naive_sgemm -s 63 -c 1 ./bench   # skip to the N=4096 launch
 ```
-
+To profile the N=4096 kernel directly, use the command
+```bash
+sudo ncu -k naive_sgemm -s 63 -c 1 ./bench  
+```
 
 Profile at N=512 (one launch of each kernel):
 
@@ -71,13 +72,11 @@ Profile at N=512 (one launch of each kernel):
 | Static shared mem / block | 0 B | 8.19 KB |
 
 At 512 both kernels are cache-resident, so the difference is the L1/TEX load pipe:
-naive pins it at 96.5% (two global loads per multiply-add), while tiling serves most
-reads from shared memory and drops it to 82%. Profile the 4096 launch to see DRAM
-throughput actually diverge.
+Profile the 4096 launch to see DRAM throughput diverge.
 
 ## Next steps
 
-- **Register blocking (1D/2D)** — each thread computes many outputs, not one. Biggest single gain.
-- **Vectorized loads** (`float4`) and coalesced access.
-- **Double-buffering** — prefetch the next tile while computing the current one.
+- **Register blocking (1D/2D)** 
+- **Vectorized loads** and coalesced access.
+- **Double-buffering**
 
